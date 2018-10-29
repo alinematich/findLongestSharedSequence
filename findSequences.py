@@ -2,10 +2,6 @@ import math
 import re
 from os import listdir
 from os.path import isfile, isdir, join
-from difflib import SequenceMatcher
-
-def similar(a, b):
-    return SequenceMatcher(None, ' '.join(a), ' '.join(b)).ratio() > 0.8
 
 def getAllFiles(path, ext):
     files = []
@@ -17,7 +13,6 @@ def getAllFiles(path, ext):
             files += getAllFiles(fn, ext)
     return files
 filenames = getAllFiles('../repos/java-design-patterns/abstract-document/src/', 'java')
-# filenames = ['mineRepoCommits.py', 'findSequences.py']
 
 codes = []
 for filename in filenames:
@@ -33,21 +28,8 @@ for code in codes:
 
 scores = [((math.log2(len(k)) * math.log2(v)) , k) for k, v in scores.items() if v > 1]
 scores.sort(key=lambda item: item[0], reverse= True)
-results = []
-for i, score in enumerate(scores):
-    if i % 50 == 0:
-        print(i)
-    scoreExists = False
-    for res in results:
-        if similar(res[1], score[1]):
-            scoreExists = True
-            break
-    if not scoreExists:
-        results.append(score)
-    if len(results) == 20:
-        break
 
-for i in results:
+for i in scores[:20]:
     print(i)
     print()
     print('------------------------------#####')
