@@ -4,6 +4,7 @@ from os.path import isfile, isdir, join
 import javalang
 import csv
 import sys
+
 tokenize = lambda string: list(map(lambda token: token.value, javalang.tokenizer.tokenize(string+'\n')))
 
 def longestCommonSequences(codes):
