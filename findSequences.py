@@ -3,7 +3,7 @@ from os import listdir
 from os.path import isfile, isdir, join
 import javalang
 import csv
-
+import sys
 tokenize = lambda string: list(map(lambda token: token.value, javalang.tokenizer.tokenize(string+'\n')))
 
 def longestCommonSequences(codes):
@@ -27,13 +27,14 @@ def getAllFiles(path, ext):
         elif isdir(fn):
             files += getAllFiles(fn, ext)
     return files
-filenames = getAllFiles('../repos/java-design-patterns/abstract-document/src/', 'java')
+
+filenames = getAllFiles(sys.argv[1], 'java')
 codes = []
 for filename in filenames:
     with open(filename) as infile:
         codes += [tokenize(infile.read())]
 
-with open('results.csv', mode='w') as outfile:
+with open(sys.argv[2], mode='w') as outfile:
     writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     writer.writerow(['Score', 'Tokens', 'Count', 'Source Code'])
     writer.writerows(list(map(lambda item: [item['score'], len(item['seq']), item['count'], list(item['seq'])], longestCommonSequences(codes))))
