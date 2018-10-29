@@ -1,7 +1,7 @@
 import math
-import re
 from os import listdir
 from os.path import isfile, isdir, join
+import javalang
 
 def getAllFiles(path, ext):
     files = []
@@ -17,7 +17,7 @@ filenames = getAllFiles('../repos/java-design-patterns/abstract-document/src/', 
 codes = []
 for filename in filenames:
     with open(filename) as infile:
-        codes += [re.sub(r'([\n]|\s)+', ' ', infile.read()).split()]
+        codes += [list(map(lambda token: token.value, javalang.tokenizer.tokenize(infile.read()+'\n')))]
 
 scores = {}
 for code in codes:
@@ -29,7 +29,7 @@ for code in codes:
 scores = [((math.log2(len(k)) * math.log2(v)) , k) for k, v in scores.items() if v > 1]
 scores.sort(key=lambda item: item[0], reverse= True)
 
-for i in scores[:20]:
+for i in scores[:100]:
     print(i)
     print()
     print('------------------------------#####')
