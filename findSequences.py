@@ -14,29 +14,18 @@ def getAllFiles(path, ext):
     return files
 filenames = getAllFiles('../repos/java-design-patterns/abstract-document/src/', 'java')
 # filenames = ['mineRepoCommits.py', 'findSequences.py']
-print(len(filenames))
+
 codes = []
 for filename in filenames:
     with open(filename) as infile:
         codes += [re.sub(r'([\n]|\s)+', ' ', infile.read()).split()]
 
-tokenSequences = set()
+scores = {}
 for code in codes:
     for length in range(2, len(code)+1):
         for index in range(0, len(code) - length + 1):
-            tokenSequences.add(tuple(code[index:index+length]))
-
-scores = {}
-for index, seq in enumerate(tokenSequences):
-    score = 0
-    seqlist = list(seq)
-    if (index+1) % 10000 == 0:
-        print(index+1, '/', len(tokenSequences))
-    for code in codes:
-        for index in range(0, len(code) - len(seq) + 1):
-            if seqlist == code[index:index+len(seqlist)]:
-                scores[seq] = scores.get(seq, 0) + 1
-                break
+            tpl = tuple(code[index:index+length])
+            scores[tpl] = scores.get(tpl, 0) + 1
 
 scores = [((math.log2(len(k)) * math.log2(v)) , k) for k, v in scores.items() if v > 1]
 scores.sort(key=lambda item: item[0], reverse= True)
@@ -46,6 +35,12 @@ for score in scores:
     for res in results:
         for i in range(len(res[1])-len(score[1])+1):
             if score[1] == res[1][i:i+len(score[1])]:
+                scoreExists = True
+                break
+        if scoreExists:
+            break
+        for i in range(len(score[1])-len(res[1])+1):
+            if res[1] == score[1][i:i+len(res[1])]:
                 scoreExists = True
                 break
         if scoreExists:
