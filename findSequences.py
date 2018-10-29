@@ -1,9 +1,8 @@
 import math
 import re
-
 from os import listdir
 from os.path import isfile, isdir, join
-path = 'src/'
+
 def getAllFiles(path, ext):
     files = []
     for f in listdir(path):
@@ -15,20 +14,18 @@ def getAllFiles(path, ext):
     return files
 filenames = getAllFiles('../repos/java-design-patterns/abstract-document/src/', 'java')
 # filenames = ['mineRepoCommits.py', 'findSequences.py']
-
+print(len(filenames))
 codes = []
-
 for filename in filenames:
     with open(filename) as infile:
         codes += [re.sub(r'([\n]|\s)+', ' ', infile.read()).split()]
 
-print(filenames)
 tokenSequences = set()
 for code in codes:
     for length in range(2, len(code)+1):
         for index in range(0, len(code) - length + 1):
             tokenSequences.add(tuple(code[index:index+length]))
-print(len(tokenSequences))
+
 scores = {}
 for index, seq in enumerate(tokenSequences):
     score = 0
@@ -43,7 +40,22 @@ for index, seq in enumerate(tokenSequences):
 
 scores = [((math.log2(len(k)) * math.log2(v)) , k) for k, v in scores.items() if v > 1]
 scores.sort(key=lambda item: item[0], reverse= True)
-for i in scores[:20]:
+results = []
+for score in scores:
+    scoreExists = False
+    for res in results:
+        for i in range(len(res[1])-len(score[1])+1):
+            if score[1] == res[1][i:i+len(score[1])]:
+                scoreExists = True
+                break
+        if scoreExists:
+            break
+    if not scoreExists:
+        results.append(score)
+    if len(results) == 20:
+        break
+
+for i in results:
     print(i)
     print()
     print('------------------------------#####')
