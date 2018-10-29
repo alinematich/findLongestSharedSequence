@@ -1,21 +1,34 @@
 import math
 import re
 
-file1 = []
-with open('mineRepoCommits.py') as file:
-    file1 = re.sub(r'([\n]|\s)+', ' ', file.read()).split()
+from os import listdir
+from os.path import isfile, isdir, join
+path = 'src/'
+def getAllFiles(path, ext):
+    files = []
+    for f in listdir(path):
+        fn = join(path, f)
+        if isfile(fn) and fn.endswith('.'+ext):
+            files.append(fn)
+        elif isdir(fn):
+            files += getAllFiles(fn, ext)
+    return files
+filenames = getAllFiles('../repos/java-design-patterns/abstract-document/src/', 'java')
+# filenames = ['mineRepoCommits.py', 'findSequences.py']
 
-file2 = []
-with open('findSequences.py') as file:
-    file2 =  re.sub(r'([\n]|\s)+', ' ', file.read()).split()
+codes = []
 
-codes = [file1, file2]
+for filename in filenames:
+    with open(filename) as infile:
+        codes += [re.sub(r'([\n]|\s)+', ' ', infile.read()).split()]
+
+print(filenames)
 tokenSequences = set()
 for code in codes:
     for length in range(2, len(code)+1):
         for index in range(0, len(code) - length + 1):
             tokenSequences.add(tuple(code[index:index+length]))
-
+print(len(tokenSequences))
 scores = {}
 for index, seq in enumerate(tokenSequences):
     score = 0
