@@ -1,4 +1,5 @@
 # findLongestSharedSequence
+this code takes a directory address and a filename then checks all java files in the directory recursively to find duplicate code
 
 ## Installation
 Install python3
