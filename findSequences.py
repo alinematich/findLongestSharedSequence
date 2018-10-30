@@ -57,7 +57,9 @@ for filename in filenames:
     with open(filename) as infile:
         codes += [tokenize(infile.read())]
 
+res = longestCommonSequences(codes)
+res = list(map(lambda item: [item['score'], len(item['seq']), item['count'], list(item['seq'])], res))
 with open(sys.argv[2], mode='w') as outfile:
     writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     writer.writerow(['Score', 'Tokens', 'Count', 'Source Code'])
-    writer.writerows(list(map(lambda item: [item['score'], len(item['seq']), item['count'], list(item['seq'])], longestCommonSequences(codes))))
+    writer.writerows(res)
